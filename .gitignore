@@ -34,3 +34,4 @@
 
 # aux files for build
 postbuild*
+bin
