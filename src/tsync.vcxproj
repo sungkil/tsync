@@ -27,7 +27,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>C:\VSTemp\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir>..\..\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -49,7 +49,7 @@
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>..\sdk\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\sdk\;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -62,7 +62,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>fsync $(TargetPath) C:\__gxsync\ F:\Dropbox\__shares\yoonha-box\__gxsync</Command>
+      <Command>IF EXIST postbuild.bat call postbuild.bat $(TargetPath)</Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>

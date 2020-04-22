@@ -31,3 +31,6 @@
 
 # archives
 *archives*
+
+# aux files for build
+postbuild*
