@@ -1,0 +1,33 @@
+# visual studio redundancy
+*.vcxproj.user
+*.vs/
+*.git
+*.aps
+*.suo
+*.pch
+*.exp
+*.lib
+*.dll
+
+# executables
+*.exe
+*.out
+*.bin
+
+# images
+*.jpg
+*.jpeg
+*.png
+*.bmp
+
+# compressed files
+*.zip
+*.7z
+
+# compiled objects
+**/.obj/*
+*.o
+*.d
+
+# archives
+*archives*
