@@ -158,7 +158,7 @@ bool item_build_t::apply_instance( bool b_dry )
 	// rename recent directories if current not exists
 	if(!dst.exists())
 	{
-		printf( "move %s %s\n", sd.back().wtoa(), dst.wtoa() );
+		printf( "mv %s %s\n", sd.back().wtoa(), dst.wtoa() );
 		if(!b_dry) sd.back().move_dir( dst );
 	}
 	printf("\n");

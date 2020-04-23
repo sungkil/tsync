@@ -19,12 +19,12 @@ enum class method_t { UNKNOWN=0, RSYNC=1, ROBOCOPY=2, SZIP=3, ZIP=4, COPY=5, MOV
 // common item types
 struct base_item_t
 {
-	std::wstring	name;
-	method_t		method;
-	path			src;
-	path			dst;
-	std::wstring	opt;
-	int				instance;
+	std::wstring		name;
+	method_t			method;
+	path				src;
+	path				dst;
+	std::wstring		opt;
+	int					instance;
 
 	const char* aname(){ return wtoa(name.c_str()); }
 };
@@ -45,8 +45,8 @@ struct item_t : public base_item_t
 	
 	std::wstring	custom;			// custom cmdline; method should be CUSTOM
 	item_build_t	build;			// built items
-	int				port = 0;		// ssh port
-	int				instance = 0;	// instances for incremental backup
+	int				port=0;			// ssh port
+	int				instance=0;		// instances for incremental backup
 	
 	// misc. flags
 	struct { bool dry=false, shutdown=false, crc=false; } b;
@@ -57,11 +57,11 @@ struct item_t : public base_item_t
 	names_t gf;		// ignore files/dirs
 	names_t gd;		// ignore dirs
 	
-	item_t( const wchar_t* name, method_t m=method_t::UNKNOWN, const wchar_t* src=L"", const wchar_t* dst=L"" ){ this->name = name; this->method = m; this->src = src; this->dst = dst; if(this->src.is_dir()) this->src = this->src.add_backslash(); }
+	item_t( const wchar_t* name, method_t m=method_t::UNKNOWN, const wchar_t* src=L"", const wchar_t* dst=L"" ){ this->name=name; this->method=m; this->src=src; this->dst=dst; if(this->src.is_dir()) this->src=this->src.add_backslash(); }
 	path src_dir(){ return src.is_dir()?src:src.dir(); }
 	bool is_custom(){ return method==method_t::CUSTOM; }
-	bool is_ssh(){ return _wcsistr(src+2,L":/")!=nullptr||_wcsistr(src+2,L":\\")!=nullptr||_wcsistr(dst+2,L":/")!=nullptr||_wcsistr(dst+2,L":\\")!=nullptr; }
-	bool is_synology(){ return _wcsistr(src,L":/volume1")||_wcsistr(dst,L":/volume1")||_wcsistr(src,L":\\volume1")||_wcsistr(dst,L":\\volume1"); }
+	bool is_ssh(){ return src.is_ssh()||dst.is_ssh(); }
+	bool is_synology(){ return src.is_synology()||dst.is_synology(); }
 	bool has_trivial_option(){ if(opt.empty()) return true; if(method!=method_t::RSYNC) return false; std::wstring o=get_option(); return o.empty()||o==RSYNC_OPTION_DEFAULT_INCLUDE||o==RSYNC_OPTION_DEFAULT_LOCAL; }
 	bool use_include(){ return method==method_t::RSYNC&&(!nf.empty()||(!is_ssh()&&!is_synology()&&!src.is_dir()&&src.exists())); }
 	bool use_instance(){ return (method==method_t::RSYNC||method==method_t::ROBOCOPY)&&instance>0&&instance<=MAX_INSTANCE; }

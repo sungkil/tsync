@@ -10,10 +10,10 @@ static std::deque<item_t> stack;
 global_item_t::global_item_t():first(L"global"),item_t(L"global")
 {
 	port = 22;
-	xf = { L"&#*", L"*humbs.db", L"*.dropbox*", L"*.cache*", L"*.bak", L"~$*", L"*.vc.db", L"*.synctex.gz" };
-	xd = { L"&#*", L".Syno*", L".vs", L"*.dropbox*" };
+	xf = { L"&#*", L"~$*", L"$~*", L"*humbs.db", L"*.dropbox*", L"*.cache*", L"*.bak", L"*.vc.db", L"*.synctex.gz" };
+	xd = { L"&#*", L".vs", L".Syno*", L"*.dropbox*" };
 	gf = { L"*esktop.ini", L"pagefile.sys" };
-	gd = { L".sync", L"@eaDir", L"*recycle*", L"*RECYCLE*", L"Recovery", L"*nicode_*e*", L"System*Volume*Information" };
+	gd = { L".sync", L"@eaDir", L"*ecycle*", L"*ECYCLE*", L"Recovery", L"*nicode_*e*", L"System*Volume*Information", L"lost*found", L".DS_Store*" };
 		
 	first = reinterpret_cast<item_t&>(*this); // keep the first state; this will be updated after global ini
 }
@@ -39,7 +39,7 @@ bool global_item_t::read_ini( bool b_dry, bool b_shutdown, bool b_crc )
 		global_ini_path = path::module_path().remove_ext()+L"."+e;
 		if(global_ini_path.exists()) break;
 	}
-	
+
 	if(global_ini_path.exists())
 	{
 		INIParser gp;	if(!gp.load(global_ini_path)) return false;

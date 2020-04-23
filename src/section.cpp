@@ -5,10 +5,13 @@
 #include <gxut/gxmemory.h>
 #include "main.h"
 
-bool read_cmd( gx::argparse::parser_t& ap, std::vector<item_t>& items, path& src, path& dst )
+bool read_cmd( gx::argparse::parser_t& ap, std::vector<item_t>& items, path& src, std::vector<path>& dsts )
 {
-	section_t s; item_t* t=s.read( ap, "cmd", src, dst ); if(!t) return false;
-	items.push_back(*t); safe_delete(t);
+	for( auto& dst : dsts )
+	{
+		section_t s; item_t* t=s.read( ap, "cmd", src, dst ); if(!t) return false;
+		items.push_back(*t); safe_delete(t);
+	}
 	return true;
 }
 
@@ -67,8 +70,8 @@ std::vector<item_t*> section_t::read( INIParser& parser, const std::string& sec 
 	std::vector<item_t*> vi;
 	if(!parser.section_exists(sec.c_str())) return vi;
 
-	name = sec;
 	path import_path;
+	std::vector<path> dsts;
 	for( auto* e : parser.get_entries( sec.c_str() ) )
 	{
 		std::string key0=e->key; if(key0.empty()) continue;
@@ -88,7 +91,7 @@ std::vector<item_t*> section_t::read( INIParser& parser, const std::string& sec 
 		std::wstring value	= parser.get_value( sec.c_str(), k0 );
 
 		if(key=="src")					src = value;
-		else if(key=="dst")				dst = value;
+		else if(key=="dst")				for(auto& s:explode_with_quotes(value.c_str()))	dsts.push_back(s.c_str());
 		else if(key=="cmd")				cmd = wtoa(value.c_str());
 		else if(key=="custom"){			custom = value; cmd = "custom"; }
 		else if(key=="option")			opt = value;
@@ -119,16 +122,17 @@ std::vector<item_t*> section_t::read( INIParser& parser, const std::string& sec 
 	// assign global section cmd when not exists
 	if(cmd.empty()&&parser.section_exists("global")&&parser.key_exists("global:cmd")) cmd = wtoa(parser.get_value("global:cmd"));
 
-	vi.push_back(build_item());
+	// build multiple items for multiple dsts
+	if(dsts.empty())						vi.push_back(build_item(sec.c_str(),path()));
+	else if(dsts.size()==1)					vi.push_back(build_item(sec.c_str(),dsts.front()));
+	else for(size_t k=0;k<dsts.size();k++)	vi.push_back(build_item(format("%s[%zd]",sec.c_str(),k),dsts[k]));
 
 	return vi;
 }
 
 item_t* section_t::read( gx::argparse::parser_t& parser, const std::string& sec, path& src, path& dst )
 {
-	name = sec;
 	this->src = src;
-	this->dst = dst;
 
 	// retrieve const key and value
 	if(parser.exists("cmd"))		cmd = parser.get<>("c");
@@ -144,12 +148,11 @@ item_t* section_t::read( gx::argparse::parser_t& parser, const std::string& sec,
 	if(parser.exists("gf"))			for(auto& s:explode_with_quotes(parser.get<std::wstring>("gf").c_str()))	gf.push_back(s);
 	if(parser.exists("gd"))			for(auto& s:explode_with_quotes(parser.get<std::wstring>("gd").c_str()))	gd.push_back(s);
 
-	return build_item();
+	return build_item(sec.c_str(),dst);
 }
 
-item_t* section_t::build_item()
+item_t* section_t::build_item( const char* name, path dst )
 {
-	const char* name = this->name.c_str();
 	method_t method = str2method(cmd.c_str());
 
 	// global item
@@ -183,7 +186,13 @@ item_t* section_t::build_item()
 	}
 
 	// get or create item
-	item_t* t = this_is_global? &global() : new item_t(atow(name),method,src.c_str(),dst.c_str());
+	item_t* t;
+	if(this_is_global) t = &global();
+	else
+	{
+		t = new item_t(atow(name),method,src.c_str(),dst.c_str());
+	}
+	
 
 	// create additional items for exclude files/dirs
 	if(method!=method_t::COPY&&method!=method_t::MOVE&&method!=method_t::CUSTOM)
