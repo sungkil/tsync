@@ -2,7 +2,7 @@
 #include "item.h"
 #include "global.h"
 
-struct section_t
+struct reader_t
 {
 	std::string		cmd;				// rsync, robocopy, ....
 	std::wstring	custom;				// custom command line
@@ -26,3 +26,5 @@ struct section_t
 
 bool read_cmd( gx::argparse::parser_t& ap, std::vector<item_t>& items, path& src, std::vector<path>& dsts );
 bool read_ini( path ini_path, std::vector<item_t>& items );
+bool read_toml( path toml_path, std::vector<item_t>& items );
+bool read_lua( path lua_path, std::vector<item_t>& items );

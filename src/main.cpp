@@ -9,8 +9,8 @@ void init_argparser( gx::argparse::parser_t& ap )
 {
 	ap.copyright( "Sungkil Lee", 2011 );
 	ap.header( "%s (exTensive SYNC) is a backup frontend to multiple backends\nincluding rsync, robocopy, 7zip, zip, copy, move, and custom.\n", ap.name() );
-	ap.add_argument( "src" ).help( "*.ini/*.tsync file or src file/directory (for cmd-based sync)" );
-	ap.add_argument( "dst" ).set_optional().help( "optional dst directories/files (for cmd-based sync)" );
+	ap.add_argument( "src" ).help( "{*.ini|*.tsync|*.toml|*.lua} file or src file/dir" );
+	ap.add_argument( "dst" ).set_optional().help( "optional dst dirs/files (for cmd-based sync)" );
 	ap.add_option( "b", "robocopy" ).help( "use robocopy; equivalent to --cmd=robocopy" );
 	ap.add_option( "s", "shutdown" ).help( "shutdown the system in the end" );
 	ap.add_option( "d", "dry" ).help( "dry run without execution" );
@@ -72,8 +72,13 @@ int wmain( int argc, wchar_t* argv[] )
 
 	// read cmd or ini, and build items for run
 	std::vector<item_t> items;
-	if(!dsts.empty()){ if(!read_cmd(ap,items,src,dsts)) return EXIT_FAILURE; }
-	else if(INI_EXTENSIONS.find(src.ext())!=INI_EXTENSIONS.end()){ if(!read_ini(src,items)) return EXIT_FAILURE; }
+	if(!dsts.empty()){												if(!read_cmd(ap,items,src,dsts)) return EXIT_FAILURE; }
+	else if(ALL_EXTENSIONS.find(src.ext())!=ALL_EXTENSIONS.end())
+	{
+		if(INI_EXTENSIONS.find(src.ext())!=INI_EXTENSIONS.end()){	if(!read_ini(src,items))	return EXIT_FAILURE; }
+		else if(src.ext()=="toml"){									if(!read_toml(src,items))	return EXIT_FAILURE; }
+		else if(src.ext()=="lua"){									if(!read_lua(src,items))	return EXIT_FAILURE; }
+	}
 
 	// execution
 	for( auto& t : items ) if(!t.build.exec()) return EXIT_FAILURE;

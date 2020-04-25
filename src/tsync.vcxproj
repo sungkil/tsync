@@ -80,13 +80,17 @@
     <ClCompile Include="item.exec.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="section.cpp" />
+    <ClCompile Include="reader.cmd.cpp" />
+    <ClCompile Include="reader.cpp" />
+    <ClCompile Include="reader.ini.cpp" />
+    <ClCompile Include="reader.lua.cpp" />
+    <ClCompile Include="reader.toml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="regex-date.h" />
-    <ClInclude Include="section.h" />
+    <ClInclude Include="reader.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

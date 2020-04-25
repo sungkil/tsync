@@ -8,10 +8,11 @@
 static const path		SZIP_PATH_FULL = L"C:\\Program Files\\7-Zip\\7z.exe";
 static const path		SZIP_PATH = SZIP_PATH_FULL.exists()?SZIP_PATH_FULL.auto_quote():SZIP_PATH_FULL.name().auto_quote();
 static const wchar_t*	RSYNC_OPTION_DEFAULT_INCLUDE = L"-rtDvzLOm"; // L copy symlinks as referent dir/files, -m: --prune-empty-dirs
-static const wchar_t*	RSYNC_OPTION_DEFAULT_LOCAL = L"-rtDvzLO --delete --delete-excluded"; // default local option; -O: ignore dir timestamps
+static const wchar_t*	RSYNC_OPTION_DEFAULT_LOCAL = L"-rtDvzL --delete --delete-excluded"; // default local option; -O: ignore dir timestamps
 static const wchar_t*	RSYNC_OPTION_EXCLUDE = L" --delete --delete-excluded";
+static std::set<path>	ALL_EXTENSIONS = { L"ini", L"tsync", L"toml", L"lua" };
 static std::set<path>	INI_EXTENSIONS = { L"ini", L"tsync" };
-static const char*		INI_EXT_WILDCARD = "*.ini|*.tsync";
+static const char*		INI_EXT_FILTER(){ static std::string s; if(s.empty()){ for(auto& e:INI_EXTENSIONS)s+=format("|*.%s",wtoa(e.c_str()));s=s.substr(1,s.length()-1); } return s.c_str(); }
 static const int		MAX_INSTANCE = 64;
 
 enum class method_t { UNKNOWN=0, RSYNC=1, ROBOCOPY=2, SZIP=3, ZIP=4, COPY=5, MOVE=6, CUSTOM=7 };

@@ -43,7 +43,7 @@ bool global_item_t::read_ini( bool b_dry, bool b_shutdown, bool b_crc )
 	if(global_ini_path.exists())
 	{
 		INIParser gp;	if(!gp.load(global_ini_path)) return false;
-		section_t g;	if(gp.section_exists("global")&&g.read(gp,"global").empty()) return false;
+		reader_t g;		if(gp.section_exists("global")&&g.read(gp,"global").empty()) return false;
 	}
 
 	global().b.dry = global().b.dry || b_dry;
@@ -60,7 +60,7 @@ bool global_item_t::read_local( INIParser& parser )
 
 	if(parser.section_exists("global"))
 	{
-		section_t g; if(g.read( parser, "global" ).empty()) return false;
+		reader_t g; if(g.read( parser, "global" ).empty()) return false;
 		for( auto* e : parser.get_entries("global") ) // entries are already sorted by indices
 		{
 			macro.apply_to(e); // apply macros from earlier entries
