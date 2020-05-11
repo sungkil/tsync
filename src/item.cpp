@@ -84,7 +84,7 @@ const wchar_t* item_t::get_command()
 	else if(method==method_t::SZIP||method==method_t::ZIP)
 	{
 		path ext = method==method_t::SZIP?".7z":".zip";
-		path dst1 = dst.is_dir()||dst.back()==L'\\'?dst.add_backslash()+(src.is_dir()?src.remove_backslash().name():src.name()):dst;
+		path dst1 = dst.is_dir()||dst.back()==L'\\'?dst.add_backslash()+(src.is_dir()?src.dir_name():src.name()):dst;
 		if(dst1.ext().empty()) dst1 = dst1+ext;
 		return format( L"%s u %s %s %s %s %s", SZIP_PATH, dst1.auto_quote(), src.auto_quote(), get_option(), exclude_file_names(), exclude_dir_names() );
 	}
