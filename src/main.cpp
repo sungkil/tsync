@@ -59,7 +59,11 @@ int wmain( int argc, wchar_t* argv[] )
 	{
 		std::vector<path> v={ ap.get<path>("dst").c_str() };
 		for( auto& o : ap.others() ) v.emplace_back(o.c_str());
-		for( auto& d : v ){ if(!d.empty()&&d.is_relative()) d=d.absolute(); dsts.push_back(d); }
+		for( auto& d : v )
+		{
+			if(!d.empty()&&d.is_relative()) d=d.absolute();
+			dsts.push_back(d);
+		}
 	}
 
 	// global states from cmd
@@ -72,7 +76,10 @@ int wmain( int argc, wchar_t* argv[] )
 
 	// read cmd or ini, and build items for run
 	std::vector<item_t> items;
-	if(!dsts.empty()){												if(!read_cmd(ap,items,src,dsts)) return EXIT_FAILURE; }
+	if(!dsts.empty())
+	{
+		if(!read_cmd(ap,items,src,dsts)) return EXIT_FAILURE;
+	}
 	else if(ALL_EXTENSIONS.find(src.ext())!=ALL_EXTENSIONS.end())
 	{
 		if(INI_EXTENSIONS.find(src.ext())!=INI_EXTENSIONS.end()){	if(!read_ini(src,items))	return EXIT_FAILURE; }
