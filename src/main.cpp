@@ -26,16 +26,6 @@ void init_argparser( gx::argparse::parser_t& ap )
 	//ap.footer( "Use proper *** patterns for include\nExample: --include={subdir}/***\n" );
 }
 
-void pause( const wchar_t* src_name )
-{
-	// if directly executed from the explorer, then pause
-	wchar_t ctbuff[4096]; GetConsoleTitleW(ctbuff,MAX_PATH);
-	path console_title = path(ctbuff).canonical();
-
-	if(console_title==path::module_path())	system( "pause" );
-	else if(console_title==src_name)		system( "pause" );
-}
-
 int wmain( int argc, wchar_t* argv[] )
 {
 	setbuf(stdout,0);setbuf(stderr,0); // no need to have fflush(stdout/stderr)
@@ -92,7 +82,7 @@ int wmain( int argc, wchar_t* argv[] )
 
 	// shutdown after all sync
 	if(global().b.shutdown)	_wsystem( L"shutdown /s /f /t 0" );
-	else					pause( src.name() ); // if directly executed from the explorer, then pause
+	else if( !os::console::has_parent() ) system( "pause" ); // if directly executed from the explorer, then pause
 
 	return EXIT_SUCCESS;
 }

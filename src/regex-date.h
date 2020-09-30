@@ -62,10 +62,10 @@ date_t match_to_date( std::wcmatch& r, bool b_debug=false )
 		y = itow(snow.wYear);
 	}
 
-	d.y = wtoi(y.c_str());	if(d.y>9&&d.y<100) d.y += 2000; // year
-	d.m = wtoi(m.c_str());	// month
-	d.d = wtoi(a.c_str());	// day
-		
+	d.y = _wtoi(y.c_str());	if(d.y>9&&d.y<100) d.y += 2000; // year
+	d.m = _wtoi(m.c_str());	// month
+	d.d = _wtoi(a.c_str());	// day
+
 	if(!is_valid_year(d.y))		return date_t();
 	if(!is_valid_month(d.m))	return date_t();
 	if(!is_valid_day(d.m,d.d))	return date_t();
