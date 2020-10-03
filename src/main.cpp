@@ -28,7 +28,8 @@ void init_argparser( gx::argparse::parser_t& ap )
 
 int wmain( int argc, wchar_t* argv[] )
 {
-	setbuf(stdout,0);setbuf(stderr,0); // no need to have fflush(stdout/stderr)
+	// disable stdout buffering: no need to have fflush(stdout/stderr)
+	setbuf(stdout,0);setbuf(stderr,0);setvbuf(stdout,nullptr,_IONBF,0);
 
 	gx::argparse::parser_t ap;
 	init_argparser(ap);
