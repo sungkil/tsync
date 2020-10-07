@@ -27,7 +27,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>C:\VSTemp\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir>..\bin\</OutDir>
+    <OutDir>..\</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -49,7 +49,7 @@
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>..\..\sdk\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\sdk;..\..\sdk\;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableParallelCodeGeneration>
       </EnableParallelCodeGeneration>
@@ -65,7 +65,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST postbuild.bat call postbuild.bat $(TargetPath)</Command>
+      <Command>IF EXIST ..\postbuild.bat call ..\postbuild.bat $(TargetPath)</Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>

@@ -35,3 +35,8 @@
 # aux files for build
 postbuild*
 bin
+
+# thirdparty libraries
+**/tomlplusplus/*
+**/gxut/*
+**/sdk/*
