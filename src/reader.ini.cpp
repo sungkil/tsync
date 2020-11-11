@@ -8,11 +8,11 @@
 bool read_ini( path ini_path, std::vector<item_t>& items )
 {
 	// local global section
-	INIParser parser( ini_path ); if(!parser.load()) return false;
+	ini::parser_t parser(ini_path); if(!parser.load()) return false;
 	if(!global().read_local( parser )) return false;
 
 	// other local items
-	for( auto& sec : parser.get_section_list() )
+	for( auto& sec : parser.sections() )
 	{
 		if(_stricmp(sec.c_str(),"global")==0) continue;
 		reader_t s; std::vector<item_t*> t = s.read( parser, sec ); if(t.empty()) return false;
@@ -38,14 +38,14 @@ std::vector<item_t*> import_ini( const char* sec, path ini_path )
 	return v;
 }
 
-std::vector<item_t*> reader_t::read( INIParser& parser, const std::string& sec )
+std::vector<item_t*> reader_t::read( ini::parser_t& parser, const std::string& sec )
 {
 	std::vector<item_t*> vi;
 	if(!parser.section_exists(sec.c_str())) return vi;
 
 	path import_path;
 	std::vector<path> dsts;
-	for( auto* e : parser.get_entries( sec.c_str() ) )
+	for( auto* e : parser.entries( sec.c_str() ) )
 	{
 		std::string key0=e->key; if(key0.empty()) continue;
 		std::string key=tolower(key0.c_str());
@@ -61,23 +61,23 @@ std::vector<item_t*> reader_t::read( INIParser& parser, const std::string& sec )
 		// retrieve const key and value
 		const char* k0	= key0.c_str();
 		const char* k	= key.c_str();
-		std::wstring value	= parser.get_value( sec.c_str(), k0 );
+		std::wstring value	= parser.get( sec.c_str(), k0 );
 
 		if(key=="src")					src = value;
 		else if(key=="dst")				for(auto& s:explode_with_quotes(value.c_str()))	dsts.push_back(s.c_str());
 		else if(key=="cmd")				cmd = wtoa(value.c_str());
 		else if(key=="custom"){			custom = value; cmd = "custom"; }
 		else if(key=="option")			opt = value;
-		else if(key=="port")			port = parser.get_int(sec.c_str(),k0);
-		else if(key=="dry")				b.dry = parser.get_bool(sec.c_str(),k0);
-		else if(key=="shutdown"){		if(parser.get_bool(sec.c_str(),k0)) global().b.shutdown = true; }
-		else if(key=="crc")				b.crc = parser.get_bool(sec.c_str(),k0);
+		else if(key=="port")			port = parser.get<int>(sec.c_str(),k0);
+		else if(key=="dry")				b.dry = parser.get<bool>(sec.c_str(),k0);
+		else if(key=="shutdown"){		if(parser.get<bool>(sec.c_str(),k0)) global().b.shutdown = true; }
+		else if(key=="crc")				b.crc = parser.get<bool>(sec.c_str(),k0);
 		else if(key=="include")			for(auto& s:explode_with_quotes(value.c_str()))	nf.push_back(s);
 		else if(key=="exclude_file")	for(auto& s:explode_with_quotes(value.c_str()))	xf.push_back(s);
 		else if(key=="exclude_dir")		for(auto& s:explode_with_quotes(value.c_str()))	xd.push_back(s);
 		else if(key=="ignore_file")		for(auto& s:explode_with_quotes(value.c_str()))	gf.push_back(s);
 		else if(key=="ignore_dir")		for(auto& s:explode_with_quotes(value.c_str()))	gd.push_back(s);
-		else if(key=="instance")		instance = parser.get_int(sec.c_str(),k0);
+		else if(key=="instance")		instance = parser.get<int>(sec.c_str(),k0);
 		else if(key=="import")			import_path = path(value.c_str()).absolute(path(parser.get_path()).dir());
 		else if(key.front()!='$')		// skip macros and error for others
 		{
@@ -93,7 +93,7 @@ std::vector<item_t*> reader_t::read( INIParser& parser, const std::string& sec )
 	if(!custom.empty()&&cmd!="custom"){ printf( "section_t::read(%s): cmd cannot be used with custom\n",sec.c_str() ); return vi; }
 
 	// assign global section cmd when not exists
-	if(cmd.empty()&&parser.section_exists("global")&&parser.key_exists("global:cmd")) cmd = wtoa(parser.get_value("global:cmd"));
+	if(cmd.empty()&&parser.section_exists("global")&&parser.key_exists("global:cmd")) cmd = wtoa(parser.get("global:cmd"));
 
 	// build multiple items for multiple dsts
 	if(dsts.empty())						vi.push_back(build_item(sec.c_str(),path()));

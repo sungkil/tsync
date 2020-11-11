@@ -20,7 +20,7 @@ struct reader_t
 	item_t* build_item( const char* name, path dst );
 
 	// read by multiple sources
-	std::vector<item_t*> read( INIParser& parser, const std::string& sec );
+	std::vector<item_t*> read( ini::parser_t& parser, const std::string& sec );
 	item_t* read( gx::argparse::parser_t& parser, const std::string& sec, path& src, path& dst );
 };
 

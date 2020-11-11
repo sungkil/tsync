@@ -42,8 +42,8 @@ bool global_item_t::read_ini( bool b_dry, bool b_shutdown, bool b_crc )
 
 	if(global_ini_path.exists())
 	{
-		INIParser gp;	if(!gp.load(global_ini_path)) return false;
-		reader_t g;		if(gp.section_exists("global")&&g.read(gp,"global").empty()) return false;
+		ini::parser_t gp;	if(!gp.load(global_ini_path)) return false;
+		reader_t g;			if(gp.section_exists("global")&&g.read(gp,"global").empty()) return false;
 	}
 
 	global().b.dry = global().b.dry || b_dry;
@@ -54,14 +54,14 @@ bool global_item_t::read_ini( bool b_dry, bool b_shutdown, bool b_crc )
 	return true;
 }
 
-bool global_item_t::read_local( INIParser& parser )
+bool global_item_t::read_local( ini::parser_t& parser )
 {
 	global_macro_t macro;
 
 	if(parser.section_exists("global"))
 	{
 		reader_t g; if(g.read( parser, "global" ).empty()) return false;
-		for( auto* e : parser.get_entries("global") ) // entries are already sorted by indices
+		for( auto* e : parser.entries("global") ) // entries are already sorted by indices
 		{
 			macro.apply_to(e); // apply macros from earlier entries
 			if(!e->key.empty()&&e->key[0]=='$') macro.data[atow(e->key.c_str())] = e->value;
@@ -69,10 +69,10 @@ bool global_item_t::read_local( INIParser& parser )
 	}
 
 	// apply macros
-	for( auto& sec : parser.get_section_list() )
+	for( auto& sec : parser.sections() )
 	{
 		if(_stricmp(sec.c_str(),"global")==0) continue;
-		for( auto* e : parser.get_entries(sec.c_str()) ) macro.apply_to(e);
+		for( auto* e : parser.entries(sec.c_str()) ) macro.apply_to(e);
 	}
 
 	return true;
