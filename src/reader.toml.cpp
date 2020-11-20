@@ -36,7 +36,7 @@ bool read_toml( path toml_path, std::vector<item_t>& items )
 		printf( "[%s]\n", k.c_str() );
 		v.visit([](auto& node) noexcept
 		{
-			for( auto& [s,t] : *node.as_table())
+			for( auto&& [s,t] : *node.as_table())
 			{
 				auto v = t.value_or("test"sv);
 				auto v2 = t.as_string();
