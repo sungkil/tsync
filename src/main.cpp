@@ -79,7 +79,8 @@ int wmain( int argc, wchar_t* argv[] )
 	}
 
 	// execution
-	for( auto& t : items ) if(!t.build.exec()) return EXIT_FAILURE;
+	for( auto& t : items )
+		if(!t.build.exec()) return EXIT_FAILURE;
 
 	// shutdown after all sync
 	if(global().b.shutdown)	_wsystem( L"shutdown /s /f /t 0" );

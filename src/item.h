@@ -13,7 +13,7 @@ static const wchar_t*	RSYNC_OPTION_EXCLUDE = L" --delete --delete-excluded";
 static std::set<path>	ALL_EXTENSIONS = { L"ini", L"tsync", L"toml", L"lua" };
 static std::set<path>	INI_EXTENSIONS = { L"ini", L"tsync" };
 static const char*		INI_EXT_FILTER(){ static std::string s; if(s.empty()){ for(auto& e:INI_EXTENSIONS)s+=format("|*.%s",wtoa(e.c_str()));s=s.substr(1,s.length()-1); } return s.c_str(); }
-static const int		MAX_INSTANCE = 64;
+static const int		MAX_INSTANCE = 1024;
 
 enum class method_t { UNKNOWN=0, RSYNC=1, ROBOCOPY=2, SZIP=3, ZIP=4, COPY=5, MOVE=6, CUSTOM=7 };
 
@@ -65,7 +65,6 @@ struct item_t : public base_item_t
 	bool is_synology(){ return src.is_synology()||dst.is_synology(); }
 	bool has_trivial_option(){ if(opt.empty()) return true; if(method!=method_t::RSYNC) return false; std::wstring o=get_option(); return o.empty()||o==RSYNC_OPTION_DEFAULT_INCLUDE||o==RSYNC_OPTION_DEFAULT_LOCAL; }
 	bool use_include(){ return method==method_t::RSYNC&&(!nf.empty()||(!is_ssh()&&!is_synology()&&!src.is_dir()&&src.exists())); }
-	bool use_instance(){ return (method==method_t::RSYNC||method==method_t::ROBOCOPY)&&instance>0&&instance<=MAX_INSTANCE; }
 
 	const wchar_t* get_names( names_t& v, const wchar_t* prefix=L"", const wchar_t* postfix=L"" );
 	const wchar_t* get_option();

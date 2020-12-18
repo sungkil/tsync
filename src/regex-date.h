@@ -16,9 +16,9 @@ struct date_t
 	int as_int() const { return d+m*100+y*10000; }
 };
 
-bool is_valid_year( int y ){ static SYSTEMTIME n=FileTimeToSystemTime(now()); return y>2010&&y<=n.wYear; }
-bool is_valid_month( int m ){ return m>=1&&m<13; }
-bool is_valid_day( int m, int d )
+inline bool is_valid_year( int y ){ static SYSTEMTIME n=FileTimeToSystemTime(now()); return y>2010&&y<=n.wYear; }
+inline bool is_valid_month( int m ){ return m>=1&&m<13; }
+inline bool is_valid_day( int m, int d )
 {
 	if(d<1||d>31) return false;
 	if(m==2&&d>29) return false;
@@ -86,6 +86,7 @@ date_t find_date_in_path( path src, bool b_debug=false )
 		std::wstring(L"^")+pattern,		// front pattern
 		pattern+std::wstring(L"$"),		// back pattern
 		std::wstring(L"IMG_")+pattern,	// image pattern
+		std::wstring(L"PXL_")+pattern,	// image pattern
 		std::wstring(L"VID_")+pattern,	// video pattern
 		std::wstring(L"Screenshot_")+pattern,	// capture pattern
 	};

@@ -54,5 +54,8 @@
     <ClCompile Include="reader.toml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="instance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

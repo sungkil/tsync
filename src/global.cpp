@@ -10,11 +10,10 @@ static std::deque<item_t> stack;
 global_item_t::global_item_t():first(L"global"),item_t(L"global")
 {
 	port = 22;
-	xf = { L"&#*", L"~$*", L"$~*", L"*humbs.db", L"*.dropbox*", L"*.cache*", L"*.bak", L"*.vc.db", L"*.synctex.gz" };
+	xf = { L"~$*", L"$~*", L"*humbs.db", L"*.dropbox*", L"*.cache*", L"*.bak", L"*.tmp" };
 	xd = { L"&#*", L".vs", L".Syno*", L"*.dropbox*" };
-	gf = { L"*esktop.ini", L"pagefile.sys" };
-	gd = { L".sync", L"@eaDir", L"*ecycle*", L"*ECYCLE*", L"Recovery", L"*nicode_*e*", L"System*Volume*Information", L"lost*found" };
-		
+	gf = { L"pagefile.sys" };
+	gd = { L".sync", L"@eaDir", L"#recycle", L"$RECYCLE.BIN", L"System*Vol*Info*" };
 	first = reinterpret_cast<item_t&>(*this); // keep the first state; this will be updated after global ini
 }
 

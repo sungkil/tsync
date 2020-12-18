@@ -47,7 +47,6 @@ item_t* reader_t::build_item( const char* name, path dst )
 		t = new item_t(atow(name),method,src.c_str(),dst.c_str());
 	}
 	
-
 	// create additional items for exclude files/dirs
 	if(method!=method_t::COPY&&method!=method_t::MOVE&&method!=method_t::CUSTOM)
 	{
@@ -76,16 +75,10 @@ item_t* reader_t::build_item( const char* name, path dst )
 		if(method==method_t::CUSTOM) t->custom = custom;
 
 		// incremental instancing
-		if(instance!=0)
+		if(instance>0) // instance should be positive
 		{
-			if(method!=method_t::RSYNC&&method!=method_t::ROBOCOPY){ printf( "[%s] instancing only supports rsync or robocopy\n", name ); return nullptr; }
-			if(instance<0){	printf( "[%s] instance(%d) should be positive\n", name, instance ); return nullptr; }
-			if(instance>MAX_INSTANCE){ printf( "[%s] instance(%d) should be < %d\n", name, instance, MAX_INSTANCE ); return nullptr; }
-			if(dst.back()!=L'\\'&&dst.back()!=L'/'){ printf( "[%s] dst for instancing should be a directory\n", name ); return nullptr; }
-			if(t->is_synology()||t->is_ssh()){ printf( "[%s] instancing does not support remote SSH\n", name ); return nullptr; }
-			if(!wcsstr(dst.dir_name(),global_macro_t::get_timestamp())){ printf( "[%s] dst.dir_name() should include $date\n", name ); return nullptr; }
-			if(!t->nf.empty()){ printf( "[%s] instance not supports inclusion\n", name ); return nullptr; }
-
+			bool support_instance( method_t method, item_t* t, int instance, path dst, const char* name );
+			if(!support_instance(method,t,instance,dst,name)) return nullptr;
 			t->instance = instance;
 		}
 	}

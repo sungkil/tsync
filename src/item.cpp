@@ -22,7 +22,7 @@ void item_t::prebuild()
 	build.b.custom = is_custom();
 	build.b.trivial_option = build.opt.empty() || has_trivial_option();
 	build.b.use_include = use_include();
-	build.b.instance = use_instance();
+	build.b.instance = instance>0;
 
 	// file/dir names
 	build.nf.disp = include_file_names(true);	build.nf.run = include_file_names(false);
@@ -86,7 +86,9 @@ const wchar_t* item_t::get_command()
 		path ext = method==method_t::SZIP?".7z":".zip";
 		path dst1 = dst.is_dir()||dst.back()==L'\\'?dst.add_backslash()+(src.is_dir()?src.dir_name():src.name()):dst;
 		if(dst1.ext().empty()) dst1 = dst1+ext;
-		return format( L"%s u %s %s %s %s %s", SZIP_PATH, dst1.auto_quote(), src.auto_quote(), get_option(), exclude_file_names(), exclude_dir_names() );
+		// [CAUTION] - "src\\*" exclude src dir name in archive, which avoids scanning the parent dir (when using just "src")
+		path src1 = src.is_dir()?(src.add_backslash()+L"*"):src;
+		return format( L"%s u %s %s %s %s %s", SZIP_PATH, dst1.auto_quote(), src1.auto_quote(), get_option(), exclude_file_names(), exclude_dir_names() );
 	}
 
 	return L"";

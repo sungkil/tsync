@@ -1,5 +1,4 @@
 #include "item.h" // include items only to work without dependency
-#include "regex-date.h"
 
 static const int WRAP_COLUMNS = 65;
 static const int PREPAD = 15;
@@ -63,6 +62,10 @@ bool item_build_t::exec()
 		if(!gf.disp.empty()) status += format( " Ignore file:   %s\n", join_word_wrap(gf.disp) );
 		if(!gd.disp.empty()) status += format( " Ignore dir:    %s\n", join_word_wrap(gd.disp) );
 	}
+
+	// instance
+	if(instance>1) status += format( " Instance  :    %d\n", instance );
+
 	status += format( "-------------------------------------------------\n" );
 
 	// log commands wet non-robocopy commands
@@ -133,35 +136,3 @@ bool item_build_t::exec()
 	return true;
 }
 
-bool item_build_t::apply_instance( bool b_dry )
-{
-	if(!b.instance) return true;
-	auto sd = dst.dir().parent().subdirs( false );
-	if(sd.size()<instance) return true;
-
-	// sort the subdir list in decending order
-	std::sort( sd.begin(), sd.end(), []( const path& a, const path& b )->bool
-	{
-		auto i = find_date_in_path(a.dir_name()).as_int();
-		auto j = find_date_in_path(b.dir_name()).as_int();
-		return i!=j?i>j:_wcsicmp(a.c_str(),b.c_str())>0;
-	});
-	
-	// delete old directories
-	for( int kn=int(sd.size()), k=kn-1; k>=instance; k-- )
-	{
-		printf( "rmdir %s\n", sd[k].wtoa() );
-		if(!b_dry) if(!sd[k].rmdir()) return false;
-	}
-	sd.resize(instance); // remove entries
-
-	// rename recent directories if current not exists
-	if(!dst.exists())
-	{
-		printf( "mv %s %s\n", sd.back().wtoa(), dst.wtoa() );
-		if(!b_dry) sd.back().move_dir( dst );
-	}
-	printf("\n");
-
-	return true;
-}
