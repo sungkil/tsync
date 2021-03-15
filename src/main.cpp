@@ -3,6 +3,7 @@
 #include <gxut/gxargparse.h>
 #include <gxut/gxiniparser.h>
 #include <gxut/gxmemory.h>
+#include <conio.h>
 #include "main.h"
 
 void init_argparser( gx::argparse::parser_t& ap )
@@ -79,12 +80,19 @@ int wmain( int argc, wchar_t* argv[] )
 	}
 
 	// execution
-	for( auto& t : items )
-		if(!t.build.exec()) return EXIT_FAILURE;
+	for( auto& t : items ) if(!t.build.exec()) return EXIT_FAILURE;
+
+	// if directly executed from the explorer
+	int kn=global().b.shutdown||os::console::has_parent()?0:4;
+	for( int k=0; k<kn; k++ )
+	{
+		printf( "Press 'R' to retry or any other key to exit . . . ");
+		int c = _getch(); printf( "\n" ); if(c!='r'&&c!='R') break; printf( "\n" );
+		for( auto& t : items ) if(!t.build.exec()) return EXIT_FAILURE;
+	}
 
 	// shutdown after all sync
-	if(global().b.shutdown)	_wsystem( L"shutdown /s /f /t 0" );
-	else if( !os::console::has_parent() ) system( "pause" ); // if directly executed from the explorer, then pause
+	if(global().b.shutdown) _wsystem( L"shutdown /s /f /t 0" );
 
 	return EXIT_SUCCESS;
 }

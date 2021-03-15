@@ -20,8 +20,12 @@ struct global_macro_t
 
 	global_macro_t()
 	{
-		data[L"$date"] = get_timestamp();				// pre-defined macro
-		data[L"$temp"] = os::temp().remove_backslash();	// pre-defined macro
+		// pre-defined macros
+		data[L"$date"] = get_timestamp();				
+		data[L"$temp"] = os::temp().remove_backslash();						// ~/appdata/local/temp/
+		data[L"$home"] = os::userprofile().remove_backslash();				// ~/
+		data[L"$appdata"] = os::appdata().remove_backslash();				// ~/appdata/roaming
+		data[L"$localappdata"] = os::local_appdata().remove_backslash();	// ~/appdata/local/
 	}
 
 	bool apply_to( ini::entry_t* e )
