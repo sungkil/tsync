@@ -15,7 +15,7 @@ static std::set<path>	INI_EXTENSIONS = { L"ini", L"tsync" };
 static const char*		INI_EXT_FILTER(){ static std::string s; if(s.empty()){ for(auto& e:INI_EXTENSIONS)s+=format("|*.%s",wtoa(e.c_str()));s=s.substr(1,s.length()-1); } return s.c_str(); }
 static const int		MAX_INSTANCE = 1024;
 
-enum class method_t { UNKNOWN=0, RSYNC=1, ROBOCOPY=2, SZIP=3, ZIP=4, COPY=5, MOVE=6, CUSTOM=7 };
+enum class method_t { UNKNOWN=0, RSYNC=1, ROBOCOPY=2, SZIP=3, ZIP=4, RAR=5 /* not implemented */, COPY=6, MOVE=7, CUSTOM=8 };
 
 // common item types
 struct base_item_t
@@ -96,7 +96,9 @@ inline method_t str2method( const char* str )
 {
 	std::string s=tolower(str);
 	return s=="robocopy"?method_t::ROBOCOPY:
-		s=="zip"?method_t::ZIP:s=="7zip"?method_t::SZIP:s=="7-zip"?method_t::SZIP:s=="7z"?method_t::SZIP:
+		s=="zip"?method_t::ZIP:
+		s=="7zip"?method_t::SZIP:s=="7-zip"?method_t::SZIP:s=="7z"?method_t::SZIP:
+		s=="rar"?method_t::RAR:
 		s=="copy"?method_t::COPY:s=="move"?method_t::MOVE:s=="rename"?method_t::MOVE:
 		s=="custom"?method_t::CUSTOM:
 		method_t::RSYNC;
@@ -107,6 +109,7 @@ inline const char* method2str( method_t cmd )
 	return cmd==method_t::ROBOCOPY?"robocopy":
 		cmd==method_t::SZIP?"7zip":
 		cmd==method_t::ZIP?"zip":
+		cmd==method_t::RAR?"rar":
 		cmd==method_t::COPY?"copy":
 		cmd==method_t::MOVE?"move":
 		cmd==method_t::RSYNC?"rsync":
