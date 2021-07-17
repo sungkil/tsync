@@ -32,8 +32,13 @@ bool item_build_t::exec()
 	// build command
 	if(!b.ssh&&!b.custom)
 	{
-		if(!src.exists()){ MessageBoxA( nullptr, format( "src=%s not exists\n", src.wtoa() ), aname(), MB_OK ); return false; }
-		if(dst.is_dir()&&dst.is_junction()){ MessageBoxA( nullptr, format( "dst=%s should not be a junction/link\n", dst.wtoa() ), aname(), MB_OK ); return false; }
+		// junction is not allowed as dst
+		if(dst.is_dir()&&dst.is_junction())
+		{ MessageBoxA( nullptr, format( "dst=%s should not be a junction/link\n", dst.wtoa() ), aname(), MB_OK ); return false; }
+
+		// src should exist when not using wildcard as src
+		if(!b.use_include||!wcsstr(src.c_str(),L"*"))
+		{ if(!src.exists()){ MessageBoxA( nullptr, format( "src=%s not exists\n", src.wtoa() ), aname(), MB_OK ); return false; } }
 	}
 
 	std::string status;

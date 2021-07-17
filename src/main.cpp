@@ -43,7 +43,12 @@ int wmain( int argc, wchar_t* argv[] )
 		src=ap.get<path>("src"); if(!src.empty()&&src.is_relative()) src=src.absolute();
 		if(src.ext().empty()&&!src.exists()){for(auto e:INI_EXTENSIONS) if((src+L"."+e).exists()){ src=src+L"."+e; break; } }
 	}
-	if(!src.exists()){ printf( "error: %s not exists\n", src.wtoa() ); return EXIT_FAILURE; }
+
+	// src exists? only when wildcard not exists
+	if(!wcsstr(src.name().c_str(),L"*")&&!src.exists())
+	{
+		printf( "error: %s not exists\n", src.wtoa() ); return EXIT_FAILURE;
+	}
 	
 	// build multiple dst list
 	std::vector<path> dsts;
